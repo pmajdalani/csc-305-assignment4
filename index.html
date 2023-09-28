@@ -40,6 +40,8 @@
         <h3 id="findAge" type="number"></h3> <br><br>
     </div>
 
+    <div id="dataContainer"></div>
+
     <img src="Logo.png" alt="Banner" id="banner">
 
     <iframe src="https://thunkable.site/w/2Z_nXRS7aKASksJNoPbIz" title="Profile App" height = 1000 width = 500></iframe>
@@ -84,10 +86,11 @@
         var findName = document.querySelector("#findName");
         var findAge = document.querySelector("#findAge");
 
-         var insertBtn = document.querySelector("#insert");
+        var insertBtn = document.querySelector("#insert");
         var updateBtn = document.querySelector("#update");
         var removeBtn = document.querySelector("#remove");
         var findBtn = document.querySelector("#find");
+        var dataContainer = document.querySelector("#dataContainer");
 
         function InsertData() {
             set(ref(db, "People/"+ enterID.value),{
@@ -143,6 +146,35 @@
                 alert(error);
             });
         }
+
+
+    function DisplayAllData() {
+    // Reference to the People node
+    const dbRef = ref(db, "People");
+
+    // Fetch all data under People
+    get(dbRef)
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                // Clear the container
+                dataContainer.innerHTML = "";
+
+                // Iterate through each child and append data to the container
+                snapshot.forEach((childSnapshot) => {
+                    var childKey = childSnapshot.key;
+                    var childData = childSnapshot.val();
+                    dataContainer.innerHTML += `<p>ID: ${childData.ID}, Name: ${childData.Name}, Age: ${childData.Age}</p>`;
+                });
+            } else {
+                dataContainer.innerHTML = "<p>No data found</p>";
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+}
+
+        DisplayAllData();
 
         insertBtn.addEventListener('click', InsertData);
         updateBtn.addEventListener('click', UpdateData);
